@@ -2,8 +2,20 @@ import json
 import os
 import pandas as pd
 
-__all__ = ['getData','getLocationDF', 'timeSub']
+__all__ = ['getData','getLocationDF', 'getSortedKeys', 'timeSub']
 
+'''
+	Loads SigCap data files from directory or list of directories to get important 
+	information for preprocessing.
+
+	Returns data structure with format:
+		data = {
+		'id': [measurement keys],
+		'location' : {'latitude': [measurement latitudes], 'longitude': [measurement longitudes]},
+		'cell_info': [list of signal strength info],
+		'time_stamp': [list of time stamps],
+		'date' : [list of dates]}
+'''
 def getData(directory):
 	data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': [], 'time_stamp': [], 'date' : []}
 	if type(directory) == list:
@@ -48,13 +60,29 @@ def getData(directory):
 def getLocationDF(data):
 	return pd.DataFrame(data['location'])
 
+'''
+	Return keys in sorted order by the time stamp, can use this to grab other data
+	in chronological order.
+'''
+def getSortedKeys(data):
+	return sorted(data['id'], key = lambda x: data['time_stamp'][x])
 
+
+'''
+	Translate timestamp to readable format
+'''
 def timeFormat(x):
     return x[0:2] + ':' + x[2:4] + ':' + x[4:6] + ':' + x[6:8]
 
+'''
+	Translate date to readable format
+'''
 def dateFormat(x):
 	return x[0:4] + ',' + x[4:6] + ',' + x[6::]
 
+'''
+	Find time difference between time_stamp x and time_stamp y
+'''
 def timeSub(x,y):
     if y > x:
         temp = '' + x

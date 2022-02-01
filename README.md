@@ -1,6 +1,6 @@
 # SigCapPreprocessing
 
-All of the data_### files are raw data collected directly for SigCap. The number at the end corresponds to the measurement's key which can be referenced in the [Measurement](#measurement-keys) Keys section. 
+All of the ``data_MM_DD_YY_K`` files are raw data collected directly for SigCap. The number at the end corresponds to the measurement's key which can be referenced in the [Measurement Keys](#measurement-keys) section. 
 
 
 # Preprocessing
@@ -31,7 +31,7 @@ In order to use the Google Maps API you need an API key, make sure that's valid.
 
 # Measurement Keys
 
-- (1): Walking around in Keohane dorm
+- (1): Walking around in Keohane 4E dorm
 - (2): Walking dorm to mailroom
 - (3): Walking mailroom to dorm
 - (4): Bus to Arts Annex
