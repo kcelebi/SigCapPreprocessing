@@ -53,3 +53,6 @@ We need the locations of our measurements as well as the signal strengths associ
 - (3): Walking mailroom to dorm
 - (4): Bus to Arts Annex
 - (5): Arts Annex to Hollows
+- (6): Davison to Crowell Quad(House H and G) with 10 seconds interval
+- (7): Davison to Crowell Quad(House H and G) with 5 seconds interval
+- (8): Davison to Crowell Quad(House H and G) with 1 second interval
