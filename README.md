@@ -15,6 +15,8 @@ You can load all of the data from a measurement by using the ``getData()`` funct
 
 The details on what that new data structure returns is documented in the ``preprocessing.py`` file. 
 
+## Simple Heatmap
+
 To make a heat map, we need the locations first:
 	
 	data = getData('YOUR_DATASET')
@@ -28,6 +30,21 @@ Then, we plug that into the the Google Maps API:
 	fig 					#returns final fig to view
 
 In order to use the Google Maps API you need an API key, make sure that's valid.
+
+## Weighted Heatmap
+
+We need the locations of our measurements as well as the signal strengths associated as weights. For each measurement there are often multiple signal strength measurements, of which, for now, I take the mean. For measurements with no connection to the CBRS node, I note the strength as 0. Each of these strengths (in dB) is scaled by -1 as the API only accepts positive integers:
+
+	weights = [np.mean(x) * -1 if len(x) > 0 else 0 for x in data['cell_info']]
+
+	fig = gmaps.figure(map_type = 'HYBRID')
+	heatmap_layer = gmaps.heatmap_layer(
+    		data = getLocationDF(data),
+    		weights = weights, 		#assign our weights
+    		max_intensity = max(weights)	#relative to current scope
+	)
+	fig.add_layer(heatmap_layer)
+	fig					#returns final fig to view
 
 # Measurement Keys
 
