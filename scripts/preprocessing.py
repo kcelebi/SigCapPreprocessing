@@ -2,7 +2,7 @@ import json
 import os
 import pandas as pd
 
-__all__ = ['getData','getLocationDF', 'getSortedKeys', 'timeSub']
+__all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub']
 
 '''
 	Loads SigCap data files from directory or list of directories to get important 
@@ -57,6 +57,10 @@ def getData(directory):
 			i+= 1
 	return data
 
+'''
+	Converts location element in data structure to pandas data frame to be
+	inputted into Google Maps API
+'''
 def getLocationDF(data):
 	return pd.DataFrame(data['location'])
 
@@ -67,6 +71,12 @@ def getLocationDF(data):
 def getSortedKeys(data):
 	return sorted(data['id'], key = lambda x: data['time_stamp'][x])
 
+
+'''
+	Return indices of measurements where a connection to CBRS node is observed
+'''
+def getConnectedIndices(data):
+	return [i for i in data['id'] if len(data['cell_info'][i]) > 0 ]
 
 '''
 	Translate timestamp to readable format
