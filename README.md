@@ -1,6 +1,6 @@
 # SigCapPreprocessing
 
-All of the data_### files are raw data collected directly for SigCap. The number at the end corresponds to the measurement's key which can be referenced in the [Measurement](#Measurement Keys) Keys section. 
+All of the data_### files are raw data collected directly for SigCap. The number at the end corresponds to the measurement's key which can be referenced in the [Measurement](#measurement-keys) Keys section. 
 
 
 # Preprocessing
@@ -15,7 +15,7 @@ You can load all of the data from a measurement by using the ``getData()`` funct
 
 The details on what that new data structure returns is documented in the ``preprocessing.py`` file. 
 
-To make a heat map, we can need the locations first:
+To make a heat map, we need the locations first:
 	
 	data = getData('YOUR_DATASET')
 	locations = getLocationsDF(data)
@@ -27,6 +27,7 @@ Then, we plug that into the the Google Maps API:
 	fig.add_layer(heatmap_layer)
 	fig 					#returns final fig to view
 
+In order to use the Google Maps API you need an API key, make sure that's valid.
 
 # Measurement Keys
 
