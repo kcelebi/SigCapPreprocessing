@@ -56,3 +56,4 @@ We need the locations of our measurements as well as the signal strengths associ
 - (6): Davison to Crowell Quad(House H and G) with 10 seconds interval
 - (7): Davison to Crowell Quad(House H and G) with 5 seconds interval
 - (8): Davison to Crowell Quad(House H and G) with 1 second interval
+- (9): Davison to main quad next to WU with 2 seconds interval
