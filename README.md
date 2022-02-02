@@ -48,11 +48,11 @@ We need the locations of our measurements as well as the signal strengths associ
 
 # Measurement Keys
 
-- (1): Walking around in Keohane 4E dorm
-- (2): Walking dorm to mailroom
-- (3): Walking mailroom to dorm
-- (4): Bus to Arts Annex
-- (5): Arts Annex to Hollows
+- (1): Walking around in Keohane 4E dorm with 2 seconds interval
+- (2): Walking from Keohane 4E to BC mailroom with 2 seconds interval
+- (3): Walking from BC mailroom to Keohane 4E with 2 seconds interval
+- (4): Bus Stop to Arts Annex with 2 seconds interval
+- (5): Arts Annex to Hollows dorm with 2 seconds interval
 - (6): Davison to Crowell Quad(House H and G) with 10 seconds interval
 - (7): Davison to Crowell Quad(House H and G) with 5 seconds interval
 - (8): Davison to Crowell Quad(House H and G) with 1 second interval

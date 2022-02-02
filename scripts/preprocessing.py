@@ -64,6 +64,8 @@ def getData(directory):
 def getLocationDF(data):
 	return pd.DataFrame(data['location'])
 
+
+
 '''
 	Return keys in sorted order by the time stamp, can use this to grab other data
 	in chronological order.
