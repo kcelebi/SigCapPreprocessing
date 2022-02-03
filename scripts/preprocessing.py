@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 
-__all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub', 'rescaleDB']
+__all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub', 'rescaleDB', 'getDukeNodeData']
 
 OUT_OF_BOUNDS = -300
 
@@ -20,53 +20,52 @@ OUT_OF_BOUNDS = -300
 		'date' : [list of dates]}
 '''
 def getData(directory):
-	data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'ss': [], 'pci': []}, 'time_stamp': [], 'date' : []}
-	if type(directory) == list:
-		i=0
-		for d in directory:
-			for f in os.listdir(d):
-				print(d + '/' + f)
-				new_data = json.load(d + '/' + f)
+	data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'pci': [], 'ss': []}, 'time_stamp': [], 'date' : []}
 
-				data['id'] += [i]
+	for i, f in enumerate(os.listdir(directory)):
+		new_data = json.load(open(directory + '/' + f))
+		data['id'] += [i]
 
-				data['location']['longitude'] += [new_data['location']['longitude']]
-				data['location']['latitude'] += [new_data['location']['latitude']]
+		data['location']['longitude'] += [new_data['location']['longitude']]
+		data['location']['latitude'] += [new_data['location']['latitude']]
 
-				data['cell_info']['ss'] += [mod_mean([x['ss'] for x in new_data['cell_info']])]
-				data['cell_info']['pci'] += [ [x['pci'] for x in new_data['cell_info']] ]
+		signal_strengths = [x['ss'] for x in new_data['cell_info']]
+		data['cell_info']['ss'] += [[OUT_OF_BOUNDS] if len(signal_strengths) == 0 else signal_strengths]
+		data['cell_info']['pci'] += [ [x['pci'] for x in new_data['cell_info']] ]
 
-				data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
+		data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
 
-				data['date'] += [dateFormat(new_data['datetime']['date'])]
-
-				i+= 1
+		data['date'] += [dateFormat(new_data['datetime']['date'])]
 
 
-	else:
-		i = 0
-		for f in os.listdir(directory):
-			new_data = json.load(open(directory + '/' + f))
-			data['id'] += [i]
-
-			data['location']['longitude'] += [new_data['location']['longitude']]
-			data['location']['latitude'] += [new_data['location']['latitude']]
-
-			data['cell_info']['ss'] += [mod_mean([x['ss'] for x in new_data['cell_info']])]
-			data['cell_info']['pci'] += [ [x['pci'] for x in new_data['cell_info']] ]
-			
-			data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
-
-			data['date'] += [dateFormat(new_data['datetime']['date'])]
-
-			i+= 1
 	return data
 
+
 '''
-	Short helper method, sets no signal to a value of -300 dBm
+	Gets data collected only from our CBRS node (pci: 40 or 20). Returns data structure of same format
 '''
-def mod_mean(x):
-	return (OUT_OF_BOUNDS if len(x) == 0 else np.mean(x))
+
+def getDukeNodeData(data):
+	duke_data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'ss': []}, 'time_stamp': [], 'date' : []}
+
+	for i in range(len(data['id'])):
+		x = []
+		if 40 in data['cell_info']['pci'][i]:
+			x += [data['cell_info']['ss'][i][data['cell_info']['pci'][i].index(40)]]
+		if 20 in data['cell_info']['pci'][i]:
+			x += [data['cell_info']['ss'][i][data['cell_info']['pci'][i].index(20)]]
+
+		if len(x) > 0:
+			duke_data['cell_info']['ss'] += [np.mean(x)]
+		else:
+			duke_data['cell_info']['ss'] += [OUT_OF_BOUNDS]
+
+	duke_data['id'] = data['id']
+	duke_data['location'] = data['location']
+	duke_data['time_stamp'] = data['time_stamp']
+	duke_data['date'] = data['date']
+
+	return duke_data
 
 '''
 	Converts location element in data structure to pandas data frame to be

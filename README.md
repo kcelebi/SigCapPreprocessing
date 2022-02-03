@@ -15,6 +15,10 @@ You can load all of the data from a measurement by using the ``getData()`` funct
 
 The details on what that new data structure returns is documented in the ``preprocessing.py`` file. 
 
+In order to get data specifically from the CBRS node on Davison quad:
+
+	duke_data = getDukeNodeData(data)
+
 ## Simple Heatmap
 
 To make a heat map, we need the locations first:
