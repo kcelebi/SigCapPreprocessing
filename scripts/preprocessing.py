@@ -1,8 +1,11 @@
 import json
 import os
 import pandas as pd
+import numpy as np
 
-__all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub']
+__all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub', 'rescaleDB']
+
+OUT_OF_BOUNDS = -300
 
 '''
 	Loads SigCap data files from directory or list of directories to get important 
@@ -17,7 +20,7 @@ __all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 't
 		'date' : [list of dates]}
 '''
 def getData(directory):
-	data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': [], 'time_stamp': [], 'date' : []}
+	data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'ss': [], 'pci': []}, 'time_stamp': [], 'date' : []}
 	if type(directory) == list:
 		i=0
 		for d in directory:
@@ -30,7 +33,8 @@ def getData(directory):
 				data['location']['longitude'] += [new_data['location']['longitude']]
 				data['location']['latitude'] += [new_data['location']['latitude']]
 
-				data['cell_info'] += [ [x['ss'] if x['ss'] is not None else 0 for x in new_data['cell_info']] ]
+				data['cell_info']['ss'] += [mod_mean([x['ss'] for x in new_data['cell_info']])]
+				data['cell_info']['pci'] += [ [x['pci'] for x in new_data['cell_info']] ]
 
 				data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
 
@@ -48,8 +52,9 @@ def getData(directory):
 			data['location']['longitude'] += [new_data['location']['longitude']]
 			data['location']['latitude'] += [new_data['location']['latitude']]
 
-			data['cell_info'] += [ [x['ss'] if x['ss'] is not None else 0 for x in new_data['cell_info']] ]
-
+			data['cell_info']['ss'] += [mod_mean([x['ss'] for x in new_data['cell_info']])]
+			data['cell_info']['pci'] += [ [x['pci'] for x in new_data['cell_info']] ]
+			
 			data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
 
 			data['date'] += [dateFormat(new_data['datetime']['date'])]
@@ -58,11 +63,24 @@ def getData(directory):
 	return data
 
 '''
+	Short helper method, sets no signal to a value of -300 dBm
+'''
+def mod_mean(x):
+	return (OUT_OF_BOUNDS if len(x) == 0 else np.mean(x))
+
+'''
 	Converts location element in data structure to pandas data frame to be
 	inputted into Google Maps API
 '''
 def getLocationDF(data):
 	return pd.DataFrame(data['location'])
+
+
+'''
+	Custom function to coerce dBm to something acceptable by Google Maps API
+'''
+def rescaleDB(data, function):
+	return [function(x) for x in data['cell_info']['ss']]
 
 
 
