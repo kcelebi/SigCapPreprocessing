@@ -39,14 +39,35 @@ This is an alternative to using a heat map. We need to split up the locations in
 First, we obtain our locations:
 
 	data = getData('YOUR_DATASET')
-	locations = getLocationsDF(data)
+	locations = getLocationDF(data)
 
 Then, we split them up by our bins:
 
-	no_signal_index = np.where(np.array(data['cell_info']['ss']) == -300)[0]
-	little_signal_index = np.where(np.array(data['cell_info']['ss']) > -150)[0]
-	medium_signal_index = np.where(np.array(data['cell_info']['ss']) > -100)[0]
-	high_signal_index = np.where(np.array(data['cell_info']['ss']) > -50)[0]
+	no_signal_index = np.where([(np.array(data['cell_info']['ss']) <= -100)])[1]
+	little_signal_index = np.where([(np.array(data['cell_info']['ss']) > -100) & (np.array(data['cell_info']['ss']) < -90)])[1]
+	medium_signal_index = np.where([(np.array(data['cell_info']['ss']) >= -90) & (np.array(data['cell_info']['ss']) < -80)])[1]
+	high_signal_index = np.where(np.array(data['cell_info']['ss']) >= -80)[0]
+	
+Add the color bar:
+
+	fig, ax = plt.subplots(figsize=(6, 1))
+	fig.subplots_adjust(bottom=0.5)
+	
+	cmap = mpl.cm.viridis
+	bounds = [-150, -100, -90, -80, 0]
+	cmap = (mpl.colors.ListedColormap(['red', 'yellow', 'blue', 'green'])
+		.with_extremes(over='0.25', under='0.75'))
+	norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+	fig.colorbar(
+	    mpl.cm.ScalarMappable(cmap=cmap, norm=norm),
+	    cax=ax,
+	    boundaries=[0] + bounds + [13],  # Adding values for extensions.
+	    extend='both',
+	    ticks=bounds,
+	    spacing='proportional',
+	    orientation='horizontal',
+	    label='signal strength',
+	)
 
 Add the appropriate data to multiple layers:
 
