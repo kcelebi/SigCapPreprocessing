@@ -2,8 +2,16 @@
 
 All of the ``data_MM_DD_YY_K`` files are raw data collected directly for SigCap. The number at the end corresponds to the measurement's key which can be referenced in the [Measurement Keys](#measurement-keys) section. 
 
+## Contents
 
-# Preprocessing
+- [Preprocessing](#preprocessing)
+- [Symbol "Heatmap"](#symbol-"heatmap")
+- [Simple Heatmap](#simple-heatmap)
+- [Weighted Heatmap](#weighted-heatmap)
+- [Measurement Keys](#measurement-keys)
+
+
+## Preprocessing
 
 The ``scripts`` folder contains the ``preprocessing.py`` file which has functions that makes it easier for us to analyze the files. Import with:
 
@@ -24,11 +32,8 @@ In order to get data specifically from the CBRS node on Davison quad:
 This is an alternative to using a heat map. We need to split up the locations into bins based on their signal strengths and assign a color to them. For now bins are:
 
 - No signal: red
-
 - Low Signal (> -150 dBm): yellow
-
 - Usable Signal ( > -100 dBm): blue
-
 - Good signal ( > -50 dBm): green
 
 First, we obtain our locations:
