@@ -19,9 +19,69 @@ In order to get data specifically from the CBRS node on Davison quad:
 
 	duke_data = getDukeNodeData(data)
 
+## Symbol "Heatmap"
+
+This is an alternative to using a heat map. We need to split up the locations into bins based on their signal strengths and assign a color to them. For now bins are:
+
+- No signal: red
+
+- Low Signal (> -150 dBm): yellow
+
+- Usable Signal ( > -100 dBm): blue
+
+- Good signal ( > -50 dBm): green
+
+First, we obtain our locations:
+
+	data = getData('YOUR_DATASET')
+	locations = getLocationsDF(data)
+
+Then, we split them up by our bins:
+
+	no_signal_index = np.where(np.array(data['cell_info']['ss']) == -300)[0]
+	little_signal_index = np.where(np.array(data['cell_info']['ss']) > -150)[0]
+	medium_signal_index = np.where(np.array(data['cell_info']['ss']) > -100)[0]
+	high_signal_index = np.where(np.array(data['cell_info']['ss']) > -50)[0]
+
+Add the appropriate data to multiple layers:
+
+	fig = gmaps.figure(map_type = 'HYBRID')
+	no_signal_layer = gmaps.symbol_layer(
+	    getLocationDF(data).iloc[no_signal_index],
+	    fill_color = 'red',
+	    stroke_color = 'red',
+	    scale = 2
+	)
+	little_signal_layer = gmaps.symbol_layer(
+	    getLocationDF(data).iloc[little_signal_index],
+	    fill_color = 'yellow',
+	    stroke_color = 'yellow',
+	    scale = 2
+	)
+	medium_signal_layer = gmaps.symbol_layer(
+	    getLocationDF(data).iloc[medium_signal_index],
+	    fill_color = 'blue',
+	    stroke_color = 'blue',
+	    scale = 2
+	)
+	high_signal_layer = gmaps.symbol_layer(
+	    getLocationDF(data).iloc[high_signal_index],
+	    fill_color = 'rgba(23, 224, 100, 0.8)',
+	    stroke_color = 'rgba(23, 224, 100, 0.8)',
+	    scale = 2
+	)
+
+Add those layers to the figure:
+
+	fig.add_layer(no_signal_layer)
+	fig.add_layer(little_signal_layer)
+	fig.add_layer(medium_signal_layer)
+	fig.add_layer(high_signal_layer)
+	fig
+
 ## Simple Heatmap
 
-To make a heat map, we need the locations first:
+Note that the measurements can appear somewhat misleading for signal strength, best used for visualizing walking paht. To make a heat map, we need the locations first:
 	
 	data = getData('YOUR_DATASET')
 	locations = getLocationsDF(data)
