@@ -5,7 +5,7 @@ All of the ``data_MM_DD_YY_K`` files are raw data collected directly for SigCap.
 ## Contents
 
 - [Preprocessing](#preprocessing)
-- [Symbol "Heatmap"](#symbol-"heatmap")
+- [Symbol "Heatmap"](#symbol-heatmap)
 - [Simple Heatmap](#simple-heatmap)
 - [Weighted Heatmap](#weighted-heatmap)
 - [Measurement Keys](#measurement-keys)
