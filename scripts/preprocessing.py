@@ -10,7 +10,6 @@ OUT_OF_BOUNDS = -300
 '''
 	Loads SigCap data files from directory or list of directories to get important 
 	information for preprocessing.
-
 	Returns data structure with format:
 		data = {
 		'id': [measurement keys],
@@ -20,25 +19,29 @@ OUT_OF_BOUNDS = -300
 		'date' : [list of dates]}
 '''
 def getData(directory):
-	data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'pci': [], 'ss': []}, 'time_stamp': [], 'date' : []}
+    data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'pci': [], 'ss': [], 'band': [], 'freq': []}, 'time_stamp': [], 'date' : [] }
 
-	for i, f in enumerate(os.listdir(directory)):
-		new_data = json.load(open(directory + '/' + f))
-		data['id'] += [i]
+    for i, f in enumerate(os.listdir(directory)):
 
-		data['location']['longitude'] += [new_data['location']['longitude']]
-		data['location']['latitude'] += [new_data['location']['latitude']]
+        new_data = json.load(open(directory + '/' + f))
 
-		signal_strengths = [x['ss'] for x in new_data['cell_info']]
-		data['cell_info']['ss'] += [[OUT_OF_BOUNDS] if len(signal_strengths) == 0 else signal_strengths]
-		data['cell_info']['pci'] += [ [x['pci'] for x in new_data['cell_info']] ]
+        data['id'] += [i]
 
-		data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
+        data['location']['longitude'] += [new_data['location']['longitude']]
+        data['location']['latitude'] += [new_data['location']['latitude']]
 
-		data['date'] += [dateFormat(new_data['datetime']['date'])]
+        signal_strengths = [x['ss'] for x in new_data['cell_info']]
 
+        data['cell_info']['ss'] += [[OUT_OF_BOUNDS] if len(signal_strengths) == 0 else signal_strengths]
+        data['cell_info']['pci'] += [ [x['pci'] for x in new_data['cell_info']] ]
+        data['cell_info']['band'] += [ [x['band'] for x in new_data['cell_info']] ]
+        data['cell_info']['freq'] += [ [x['freq'] for x in new_data['cell_info']] ]
 
-	return data
+        data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
+
+        data['date'] += [dateFormat(new_data['datetime']['date'])]
+
+    return data
 
 
 '''
@@ -46,26 +49,28 @@ def getData(directory):
 '''
 
 def getDukeNodeData(data):
-	duke_data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'ss': []}, 'time_stamp': [], 'date' : []}
+    duke_data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'ss': [], 'band': [], 'freq': []}, 'time_stamp': [], 'date' : []}
+    for i in range(len(data['id'])):
+        x = []
+        if 40 in data['cell_info']['pci'][i]:
+            x += [data['cell_info']['ss'][i][data['cell_info']['pci'][i].index(40)]]
+        if 20 in data['cell_info']['pci'][i]:
+            x += [data['cell_info']['ss'][i][data['cell_info']['pci'][i].index(20)]]
 
-	for i in range(len(data['id'])):
-		x = []
-		if 40 in data['cell_info']['pci'][i]:
-			x += [data['cell_info']['ss'][i][data['cell_info']['pci'][i].index(40)]]
-		if 20 in data['cell_info']['pci'][i]:
-			x += [data['cell_info']['ss'][i][data['cell_info']['pci'][i].index(20)]]
+        if len(x) > 0:
+            duke_data['cell_info']['ss'] += [np.mean(x)]
+        else:
+            duke_data['cell_info']['ss'] += [OUT_OF_BOUNDS]
 
-		if len(x) > 0:
-			duke_data['cell_info']['ss'] += [np.mean(x)]
-		else:
-			duke_data['cell_info']['ss'] += [OUT_OF_BOUNDS]
+    duke_data['id'] = data['id']
+    duke_data['location'] = data['location']
+    duke_data['time_stamp'] = data['time_stamp']
+    duke_data['date'] = data['date']
+    duke_data['cell_info']['band'] = data['cell_info']['band']
+    duke_data['cell_info']['freq'] = data['cell_info']['freq']
+    
 
-	duke_data['id'] = data['id']
-	duke_data['location'] = data['location']
-	duke_data['time_stamp'] = data['time_stamp']
-	duke_data['date'] = data['date']
-
-	return duke_data
+    return duke_data
 
 '''
 	Converts location element in data structure to pandas data frame to be
@@ -123,3 +128,5 @@ def timeSub(x,y):
     y = int(y_comp[0])*60*60 + int(y_comp[1])*60 + int(y_comp[2]) + int(y_comp[3])/100
     
     return round(x-y, 4)
+
+
