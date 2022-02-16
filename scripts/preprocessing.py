@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 
-__all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub', 'rescaleDB', 'getDukeNodeData']
+__all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub', 'rescaleDB', 'getDukeNodeData', 'OUT_OF_BOUNDS']
 
 OUT_OF_BOUNDS = -300
 
@@ -39,6 +39,28 @@ def getData(directory):
 
 
 	return data
+
+def getForeignData(directory):
+	duke_data = {'id': [], 'location' : {'latitude': [], 'longitude': []}, 'cell_info': {'ss': []}, 'time_stamp': [], 'date' : []}
+
+	for i in range(len(data['id'])):
+		x = []
+		if 40 in data['cell_info']['pci'][i]:
+			x += [data['cell_info']['ss'][i][ data['cell_info']['pci'][i].index(40) ]]
+		if 20 in data['cell_info']['pci'][i]:
+			x += [data['cell_info']['ss'][i][ data['cell_info']['pci'][i].index(20) ]]
+
+		if len(x) > 0:
+			duke_data['cell_info']['ss'] += [np.mean(x)]
+		else:
+			duke_data['cell_info']['ss'] += [OUT_OF_BOUNDS]
+
+	duke_data['id'] = data['id']
+	duke_data['location'] = data['location']
+	duke_data['time_stamp'] = data['time_stamp']
+	duke_data['date'] = data['date']
+
+	return duke_data
 
 
 '''
