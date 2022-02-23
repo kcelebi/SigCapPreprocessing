@@ -5,7 +5,7 @@ import numpy as np
 
 __all__ = ['getData','getLocationDF', 'getSortedKeys', 'getConnectedIndices', 'timeSub', 'rescaleDB', 'getDukeNodeData', 'getForeignData', 'OUT_OF_BOUNDS']
 
-OUT_OF_BOUNDS = -300
+OUT_OF_BOUNDS = -150
 
 '''
 	Loads SigCap data files from directory or list of directories to get important 
@@ -27,7 +27,7 @@ def getData(directory):
 		signal_strengths = [x['ss'] for x in new_data['cell_info']]
 
 		if len(signal_strengths) == 0:
-			data['id'] += [i]
+			#data['id'] += [i]
 			data['location']['longitude'] += [new_data['location']['longitude']]
 			data['location']['latitude'] += [new_data['location']['latitude']]
 
@@ -35,9 +35,13 @@ def getData(directory):
 			data['cell_info']['pci'] += [None]
 			data['cell_info']['band'] += [None]
 			data['cell_info']['freq'] += [None]
+
+			data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
+
+			data['date'] += [dateFormat(new_data['datetime']['date'])]
 		else:
 			for j, v in enumerate(signal_strengths):
-				data['id'] += [i]
+				#data['id'] += [i]
 				data['location']['longitude'] += [new_data['location']['longitude']]
 				data['location']['latitude'] += [new_data['location']['latitude']]
 
@@ -49,6 +53,8 @@ def getData(directory):
 				data['time_stamp'] += [timeFormat(new_data['datetime']['time'])]
 
 				data['date'] += [dateFormat(new_data['datetime']['date'])]
+
+		data['id'] = [i for i in range(len(data['cell_info']['ss']))]
 
 	return data
 
