@@ -150,3 +150,5 @@ We need the locations of our measurements as well as the signal strengths associ
 - (13): Main quad into Perkins Library with 1 second interval
 - (18): Walking from throughout quad up to Davison
 - (19): Walking throughout Davison Quad
+- (20): Walking under Davison Quad along lawn
+- (21): Walking behind libraries near Wilkinson from West of quad
