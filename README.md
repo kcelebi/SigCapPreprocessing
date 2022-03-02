@@ -148,3 +148,5 @@ We need the locations of our measurements as well as the signal strengths associ
 - (9): Davison to main quad next to WU with 2 seconds interval
 - (10): Keohane 4E to Perkins Library with 2 seconds interval
 - (13): Main quad into Perkins Library with 1 second interval
+- (18): Walking from throughout quad up to Davison
+- (19): Walking throughout Davison Quad
